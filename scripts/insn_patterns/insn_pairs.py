@@ -50,14 +50,11 @@ def track_pairs(instr_trace):
         
         previous_instr = insn_name
     
-    # Sort based on the corresponding counter values
-    sorted_pairs = sorted(pairs_dict.items(), key=lambda x: x[1], reverse=True)
-
     # Returns a list of tuples where each instruction is associated with their counter
     return pairs_dict
 
 def main():
-    minimum_count = 5
+    minimum_count = 0
     diff_threshold = 3
     # Read in the stdin and store in the instr_trace variable
     instr_trace = sys.stdin.readlines()
@@ -70,6 +67,7 @@ def main():
         with open(args.rawdump+".JSON", 'w') as dump:
             dump.write(json.dumps(sorted_raw))
         with open(args.rawdump+".txt", 'w') as dump:
+            dump.write("Raw most common instruction pairs")
             dump.write(json.dumps(print_pairs(sorted_raw, dump)))
 
     result = local_maxima(raw_result, minimum_count, diff_threshold, False)
@@ -80,6 +78,7 @@ def main():
         with open(args.jsondump, 'w') as dump:
             dump.write(json.dumps(result))
 
+    print("Filtered most common instruction pairs")
     # Print the formatted version to stdout for user readability
     print_pairs(result)
 

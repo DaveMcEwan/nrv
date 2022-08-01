@@ -7,7 +7,7 @@
 #       e.g. scripts/bandwidth/load_bw/example-load-bytes.png
 
 # Example to guide use:
-# Run the command : python3 scripts/common/display_line_graph.py \
+# Run the command : python3 scripts/display/line_graph.py \
 #       --img=scripts/bandwidth/load_bw/example-load-bytes.pdf \
 #       -p=mov_avg \
 #       -n=4 \
@@ -48,12 +48,7 @@ def display_graph(avg_stream):
     plt.savefig(args.img)
 
 def main():
-    if args.ignore_first:
-        # Ignore the first line as this is just information added to the trace file
-        input = sys.stdin.readlines()[1:]
-    else:
-        input = sys.stdin.readlines()
-    
+    input = sys.stdin.readlines()[1:] if args.ignore_first else sys.stdin.readlines()
     display_graph(input)
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@
 # Output : Heatmap figure saved in the filepath provided by the --img flag
 
 # Example to guide use:
-# Run the command : python3 scripts/common/display/heatmap.py \
+# Run the command : python3 scripts/display/heatmap.py \
 #                   -j=<input json file> \
 #                   -p=<profile for plot axis names> \
 #                   -i=<output figure filename>
@@ -94,7 +94,7 @@ def plot_heatmap(arr, y_labels, x_labels):
     plt.savefig(args.img)
 
 def main():
-    with open(args.jsondump) as dump:
+    with open(args.jsondump, 'r') as dump:
         data = json.load(dump)
     
     arr, x_labels, y_labels = parse_pairs_heatmap(data, 16)

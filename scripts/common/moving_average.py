@@ -20,7 +20,9 @@ import scipy
 
 # Script arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("-n", "--window", help="Moving Average window size") # args.window
+parser.add_argument("-n", "--window", help="Moving Average window size")
+parser.add_argument("-f", "--ignore_first", \
+    help="Set to True to ignore the first line")
 args = parser.parse_args()
 
 # Moving average window function
@@ -31,8 +33,7 @@ def moving_average_scipy(input_stream):
     # return list(avg)
 
 def main():
-    # Read the stdin input as a variable so we can then return to it
-    input = sys.stdin.readlines()
+    input = sys.stdin.readlines()[1:] if args.ignore_first else sys.stdin.readlines()
     input_floats = [float(x) for x in input]
     moving_average_scipy(input_floats)
 

@@ -48,18 +48,19 @@ def check_isa(isa, keys=None, reg=False):
     elif isa[4].lower() == "e":
         reg_dict.update(convert_reg("rv"+XLEN+"e"))
     elif isa[4].lower() == 'g':
-        all_instrs.update(convert_csv_to_dict('m', keys))
-        history['m'] = True
+        pass
+        # all_instrs.update(convert_csv_to_dict('m', keys))
+        # history['m'] = True
 
-        all_instrs.update(convert_csv_to_dict('a', keys))
-        history['a'] = True
+        # all_instrs.update(convert_csv_to_dict('a', keys))
+        # history['a'] = True
 
-        all_instrs.update(convert_csv_to_dict('f', keys))
-        history['f'] = True
-        reg_dict.update(convert_reg("f"))
+        # all_instrs.update(convert_csv_to_dict('f', keys))
+        # history['f'] = True
+        # reg_dict.update(convert_reg("f"))
 
-        all_instrs.update(convert_csv_to_dict('d', keys))
-        history['d'] = True
+        # all_instrs.update(convert_csv_to_dict('d', keys))
+        # history['d'] = True
  
     # Iterate through the remaining characters
     for index in range(5, len(isa)):
@@ -77,14 +78,16 @@ def check_isa(isa, keys=None, reg=False):
 
             # Specific cases for instruction inclusion
             if extension == 'd':
+                pass
                 # d implies the inclusion of f which may or may not be stated
-                all_instrs.update(convert_csv_to_dict('f', keys))
-                history['f'] = True
+                # all_instrs.update(convert_csv_to_dict('f', keys))
+                # history['f'] = True
             elif extension == 'c':
-                if history['f']:
-                    all_instrs.update(convert_csv_to_dict('fc', keys))
-                if history['d']:
-                    all_instrs.update(convert_csv_to_dict('dc', keys))
+                pass
+                # if history['f']:
+                #     all_instrs.update(convert_csv_to_dict('fc', keys))
+                # if history['d']:
+                #     all_instrs.update(convert_csv_to_dict('dc', keys))
             # Expand upon with more combinations as we make them
 
     if reg:

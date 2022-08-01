@@ -93,7 +93,7 @@ def timed_main():
 
 # Default main
 def main():
-    minimum_count = 1
+    minimum_count = 0
     diff_threshold = 5
     # Read in the stdin and store in the instr_trace variable
     instr_trace = sys.stdin.readlines()
@@ -111,6 +111,8 @@ def main():
         with open(args.rawdump+".JSON", 'w') as dump:
             dump.write(json.dumps(raw_result))
         with open(args.rawdump+".txt", 'w') as dump:
+            dump.write("Raw most common instruction patterns for sizes \
+                between "+str(min_pattern_size)+" and "+str(max_pattern_size))
             dump.write(json.dumps(print_pairs(raw_result, dump)))
 
     result = local_maxima(all_patterns_dict, minimum_count, diff_threshold, False)
@@ -122,6 +124,8 @@ def main():
             dump.write(json.dumps(result))
 
     # Print the formatted version to stdout for user readability
+    print("Filtered most common instruction patterns for sizes between \
+        "+str(min_pattern_size)+" and "+str(max_pattern_size))
     print_pairs(result)
 
 if __name__ == "__main__":

@@ -10,7 +10,8 @@ default: assembly
 default: disassembly
 default: histogram
 default: extract_main
-default: bandwidth
+default: display_bandwidth
+default: display_instruction_sequences
 
 # Checking if a RISCV compiler is present
 ifndef RISCV
@@ -95,9 +96,7 @@ FNAME_DIRS 	:= $(addsuffix ../,${NPROC_DIRS})
 # common - subdirectory used to store temporary files used by multiple test cases
 COMMON_DIRS := $(addsuffix ../common,${FNAME_DIRS})
 # figures - subdirectories for any figures
-FIGURE_DIRS := $(addsuffix figures/,${NPROC_DIRS})
-LOAD_BW_FIG_DIRS  := $(addsuffix bw/load/,${FIGURE_DIRS})
-STORE_BW_FIG_DIRS := $(addsuffix bw/store/,${FIGURE_DIRS})
+RESULT_DIRS := $(addsuffix results/,${NPROC_DIRS})
 
 #	Target files
 OBJECTS 		   := $(addsuffix testcase.o,${FNAME_DIRS})
@@ -110,55 +109,72 @@ DISASSEMBLIES 	   := $(subst .o,.dasm,${OBJECTS})
 MAIN_DISASSEMBLIES := $(subst testcase.dasm,main.dasm,${DISASSEMBLIES})
 
 #		--------------------- BANDWIDTH TARGETS ---------------------
+# Directories
+BW_DIRS 	  := $(addsuffix bw/,${RESULT_DIRS})
+LOAD_BW_DIRS  := $(addsuffix load/,${BW_DIRS})
+STORE_BW_DIRS := $(addsuffix store/,${BW_DIRS})
+
 # Raw bandwidth streams
-LOAD_BYTE_STREAMS  := $(subst testcase,load-byte-stream,${TRACES})
-STORE_BYTE_STREAMS := $(subst testcase,store-byte-stream,${TRACES})
+LOAD_BYTE_STREAMS  := $(addsuffix load-byte-stream.trc,${LOAD_BW_DIRS})
+STORE_BYTE_STREAMS := $(addsuffix store-byte-stream.trc,${STORE_BW_DIRS})
 
-#	Figures and corresponding average traces
-LOAD_BW_2		  := $(addsuffix load-bw-2.pdf,${LOAD_BW_FIG_DIRS})
-LOAD_BW_2_TRC	  := $(addsuffix load-bw-2.trc,${LOAD_BW_FIG_DIRS})
+# Figures and corresponding average traces
+LOAD_BW_2		  := $(addsuffix load-bw-2.pdf,${LOAD_BW_DIRS})
+LOAD_BW_2_TRC	  := $(addsuffix load-bw-2.trc,${LOAD_BW_DIRS})
 
-LOAD_BW_4		  := $(addsuffix load-bw-4.pdf,${LOAD_BW_FIG_DIRS})
-LOAD_BW_4_TRC	  := $(addsuffix load-bw-4.trc,${LOAD_BW_FIG_DIRS})
+LOAD_BW_4		  := $(addsuffix load-bw-4.pdf,${LOAD_BW_DIRS})
+LOAD_BW_4_TRC	  := $(addsuffix load-bw-4.trc,${LOAD_BW_DIRS})
 
-LOAD_BW_8		  := $(addsuffix load-bw-8.pdf,${LOAD_BW_FIG_DIRS})
-LOAD_BW_8_TRC	  := $(addsuffix load-bw-8.trc,${LOAD_BW_FIG_DIRS})
+LOAD_BW_8		  := $(addsuffix load-bw-8.pdf,${LOAD_BW_DIRS})
+LOAD_BW_8_TRC	  := $(addsuffix load-bw-8.trc,${LOAD_BW_DIRS})
 
-LOAD_BW_16	  	  := $(addsuffix load-bw-16.pdf,${LOAD_BW_FIG_DIRS})
-LOAD_BW_16_TRC	  := $(addsuffix load-bw-16.trc,${LOAD_BW_FIG_DIRS})
+LOAD_BW_16	  	  := $(addsuffix load-bw-16.pdf,${LOAD_BW_DIRS})
+LOAD_BW_16_TRC	  := $(addsuffix load-bw-16.trc,${LOAD_BW_DIRS})
 
-LOAD_BW_32	  	  := $(addsuffix load-bw-32.pdf,${LOAD_BW_FIG_DIRS})
-LOAD_BW_32_TRC	  := $(addsuffix load-bw-32.trc,${LOAD_BW_FIG_DIRS})
+LOAD_BW_32	  	  := $(addsuffix load-bw-32.pdf,${LOAD_BW_DIRS})
+LOAD_BW_32_TRC	  := $(addsuffix load-bw-32.trc,${LOAD_BW_DIRS})
 
-LOAD_BW_64	  	  := $(addsuffix load-bw-64.pdf,${LOAD_BW_FIG_DIRS})
-LOAD_BW_64_TRC	  := $(addsuffix load-bw-64.trc,${LOAD_BW_FIG_DIRS})
+LOAD_BW_64	  	  := $(addsuffix load-bw-64.pdf,${LOAD_BW_DIRS})
+LOAD_BW_64_TRC	  := $(addsuffix load-bw-64.trc,${LOAD_BW_DIRS})
 
-LOAD_BW_128	  	  := $(addsuffix load-bw-128.pdf,${LOAD_BW_FIG_DIRS})
-LOAD_BW_128_TRC	  := $(addsuffix load-bw-128.trc,${LOAD_BW_FIG_DIRS})
+LOAD_BW_128	  	  := $(addsuffix load-bw-128.pdf,${LOAD_BW_DIRS})
+LOAD_BW_128_TRC	  := $(addsuffix load-bw-128.trc,${LOAD_BW_DIRS})
 
-STORE_BW_2		  := $(addsuffix store-bw-2.pdf,${STORE_BW_FIG_DIRS})
-STORE_BW_2_TRC	  := $(addsuffix store-bw-2.trc,${STORE_BW_FIG_DIRS})
+STORE_BW_2		  := $(addsuffix store-bw-2.pdf,${STORE_BW_DIRS})
+STORE_BW_2_TRC	  := $(addsuffix store-bw-2.trc,${STORE_BW_DIRS})
 
-STORE_BW_4		  := $(addsuffix store-bw-4.pdf,${STORE_BW_FIG_DIRS})
-STORE_BW_4_TRC	  := $(addsuffix store-bw-4.trc,${STORE_BW_FIG_DIRS})
+STORE_BW_4		  := $(addsuffix store-bw-4.pdf,${STORE_BW_DIRS})
+STORE_BW_4_TRC	  := $(addsuffix store-bw-4.trc,${STORE_BW_DIRS})
 
-STORE_BW_8		  := $(addsuffix store-bw-8.pdf,${STORE_BW_FIG_DIRS})
-STORE_BW_8_TRC	  := $(addsuffix store-bw-8.trc,${STORE_BW_FIG_DIRS})
+STORE_BW_8		  := $(addsuffix store-bw-8.pdf,${STORE_BW_DIRS})
+STORE_BW_8_TRC	  := $(addsuffix store-bw-8.trc,${STORE_BW_DIRS})
 
-STORE_BW_16	  	  := $(addsuffix store-bw-16.pdf,${STORE_BW_FIG_DIRS})
-STORE_BW_16_TRC	  := $(addsuffix store-bw-16.trc,${STORE_BW_FIG_DIRS})
+STORE_BW_16	  	  := $(addsuffix store-bw-16.pdf,${STORE_BW_DIRS})
+STORE_BW_16_TRC	  := $(addsuffix store-bw-16.trc,${STORE_BW_DIRS})
 
-STORE_BW_32	  	  := $(addsuffix store-bw-32.pdf,${STORE_BW_FIG_DIRS})
-STORE_BW_32_TRC	  := $(addsuffix store-bw-32.trc,${STORE_BW_FIG_DIRS})
+STORE_BW_32	  	  := $(addsuffix store-bw-32.pdf,${STORE_BW_DIRS})
+STORE_BW_32_TRC	  := $(addsuffix store-bw-32.trc,${STORE_BW_DIRS})
 
-STORE_BW_64	  	  := $(addsuffix store-bw-64.pdf,${STORE_BW_FIG_DIRS})
-STORE_BW_64_TRC	  := $(addsuffix store-bw-64.trc,${STORE_BW_FIG_DIRS})
+STORE_BW_64	  	  := $(addsuffix store-bw-64.pdf,${STORE_BW_DIRS})
+STORE_BW_64_TRC	  := $(addsuffix store-bw-64.trc,${STORE_BW_DIRS})
 
-STORE_BW_128	  := $(addsuffix store-bw-128.pdf,${STORE_BW_FIG_DIRS})
-STORE_BW_128_TRC  := $(addsuffix store-bw-128.trc,${STORE_BW_FIG_DIRS})
+STORE_BW_128	  := $(addsuffix store-bw-128.pdf,${STORE_BW_DIRS})
+STORE_BW_128_TRC  := $(addsuffix store-bw-128.trc,${STORE_BW_DIRS})
 
 #		----------------- PATTERN DETECTION TARGETS -----------------
+# Directories
+INSN_SEQ_DIRS 			:= $(addsuffix insn_sequences/,${RESULT_DIRS})
+RAW_INSN_SEQ_DIRS 		:= $(addsuffix raw/,${INSN_SEQ_DIRS})
+FILTERED_INSN_SEQ_DIRS 	:= $(addsuffix filtered/,${INSN_SEQ_DIRS})
 
+# Target display files
+FILTERED_INSN_PAIRS_HEATMAPS := $(addsuffix pairs-heatmap.pdf,${FILTERED_INSN_SEQ_DIRS})
+FILTERED_INSN_PAIRS_COL := $(addsuffix pairs-column.pdf,${FILTERED_INSN_SEQ_DIRS})
+FILTERED_INSN_PATTERNS_COL := $(addsuffix patterns-column.pdf,${FILTERED_INSN_SEQ_DIRS})
+
+# Target files
+FILTERED_INSN_PAIRS		:= $(addsuffix pairs.txt,${FILTERED_INSN_SEQ_DIRS})
+FILTERED_INSN_PATTERNS	:= $(addsuffix patterns.txt,${FILTERED_INSN_SEQ_DIRS})
 
 # --------------- Variable definitions based on the pattern rule ---------------
 # Second set of variable names/definitions. This one is formed based on the
@@ -189,7 +205,8 @@ CC = riscv$(XLEN)-unknown-elf-$(COMPILER)	# Compilation command
 OBJDUMP = ${RISCV}/bin/riscv$(XLEN)-unknown-elf-objdump
 SIZE 	= ${RISCV}/bin/riscv$(XLEN)-unknown-elf-size 
 
-SPIKE 	= ${RISCV}/bin/spike
+# SPIKE 	= ${RISCV}/bin/spike
+SPIKE	= spike
 
 # ------------- Variables definitions based on the recipe target -------------
 # $@ - Recipe target
@@ -301,16 +318,26 @@ COMMON_DIRS:
 	@echo Making all COMMON_DIRS
 	mkdir -p ${COMMON_DIRS}
 
-# .PHONY: FIGURE_DIRS
-FIGURE_DIRS:
-	@echo Making all FIGURE_DIRS
-	mkdir -p ${FIGURE_DIRS}
+# .PHONY: RESULT_DIRS
+RESULT_DIRS:
+	@echo Making all RESULT_DIRS
+	mkdir -p ${RESULT_DIRS}
 
-LOAD_BW_FIG_DIRS:
-	mkdir -p ${LOAD_BW_FIG_DIRS}
+LOAD_BW_DIRS:
+	@echo Making all LOAD_BW_DIRS
+	mkdir -p ${LOAD_BW_DIRS}
 
-STORE_BW_FIG_DIRS:
-	mkdir -p ${STORE_BW_FIG_DIRS}
+STORE_BW_DIRS:
+	@echo Making all STORE_BW_DIRS
+	mkdir -p ${STORE_BW_DIRS}
+
+RAW_INSN_SEQ_DIRS:
+	@echo Making all RAW_INSN_SEQ_DIRS
+	mkdir -p ${RAW_INSN_SEQ_DIRS}
+
+FILTERED_INSN_SEQ_DIRS:
+	@echo Making all FILTERED_INSN_SEQ_DIRS
+	mkdir -p ${FILTERED_INSN_SEQ_DIRS}
 
 # ----------------------------------- BUILD -----------------------------------
 # Compilation targets (executables and object files)
@@ -337,6 +364,9 @@ ${BUILD_DIR}/%/testcase.elf: \
 ${BUILD_DIR}/%/testcase.o: \
 	$$(addsuffix .c,$$(addprefix ${SRC_DIR}/,$$(word 2, $$(subst /, ,$$*)))) \
 	| FNAME_DIRS
+
+	echo "Forming object file"
+	echo $@
 
 	${CC} $(CFLAGS) ${INCLUDES} -c $^ -o $@
 
@@ -401,7 +431,8 @@ ${BUILD_DIR}/%/../main.dasm: ${BUILD_DIR}/%/../testcase.dasm | NPROC_DIRS
 # 			------------------------ BANDWIDTH -------------------------
 # make bandwidth - forms all possible figures
 .PHONY: display_bandwidth
-display_bandwidth: display_load_bw_all display_store_bw_all
+display_bandwidth: avg_load_bw_all avg_store_bw_all \
+display_load_bw_all display_store_bw_all
 
 # 			   ----------------------- LOAD ------------------------
 # Display all
@@ -427,13 +458,19 @@ display_load_bw_small  : ${LOAD_BW_2} ${LOAD_BW_4}
 display_load_bw_medium : ${LOAD_BW_8} ${LOAD_BW_16} ${LOAD_BW_32}
 display_load_bw_large  : ${LOAD_BW_64} ${LOAD_BW_128}
 
+# Target 	 :	bw/load/load-bw-n.pdf = LOAD_BW_N
+# Dependency :  bw/load/load-bw-n.trc = LOAD_BW_N_TRC
 .SECONDEXPANSION:
 ${LOAD_BW_2} ${LOAD_BW_4} ${LOAD_BW_8} ${LOAD_BW_16} \
 ${LOAD_BW_32} ${LOAD_BW_64} ${LOAD_BW_128} \
-	: $$(addsuffix .trc, $$(basename $$@))
+	: $$(subst .pdf,.trc,$$@) | LOAD_BW_DIRS
 
-	python3 scripts/common/display_line_graph.py -p=mov_avg -f=True \
+	python3 scripts/display/line_graph.py -p=mov_avg -f=True \
 	-n=$(WINDOW_SIZE) --img=$@ < $<
+
+.PHONY: avg_load_bw_all
+avg_load_bw_all : ${LOAD_BW_2_TRC} ${LOAD_BW_4_TRC} ${LOAD_BW_8_TRC} \
+${LOAD_BW_16_TRC} ${LOAD_BW_32_TRC} ${LOAD_BW_64_TRC} ${LOAD_BW_128_TRC}
 
 # Individual load targets for average trace calculations
 .PHONY: avg_load_bw_2 avg_load_bw_4 avg_load_bw_8
@@ -453,12 +490,14 @@ avg_load_bw_small  : ${LOAD_BW_2_TRC} ${LOAD_BW_4_TRC}
 avg_load_bw_medium : ${LOAD_BW_8_TRC} ${LOAD_BW_16_TRC} ${LOAD_BW_32_TRC}
 avg_load_bw_large  : ${LOAD_BW_64_TRC} ${LOAD_BW_128_TRC}
 
+# Target 	 :	bw/load/load-bw-n.trc = LOAD_BW_N_TRC
+# Dependency :  bw/load/load-byte-stream.trc = LOAD_BYTE_STREAMS
 .SECONDEXPANSION:
 ${LOAD_BW_2_TRC} ${LOAD_BW_4_TRC} ${LOAD_BW_8_TRC} ${LOAD_BW_16_TRC} \
 ${LOAD_BW_32_TRC} ${LOAD_BW_64_TRC} ${LOAD_BW_128_TRC} \
-	&: $$(addsuffix ../../../load-byte-stream.trc, $$(dir $$@))
+	: $$(addsuffix load-byte-stream.trc, $$(dir $$@)) | LOAD_BW_DIRS
 	
-	python3 scripts/common/moving_average.py -n=$(WINDOW_SIZE) \
+	python3 scripts/common/moving_average.py -f=True -n=$(WINDOW_SIZE) \
 	< $< > $@
 
 # 			  ------------------------ STORE ------------------------
@@ -488,10 +527,14 @@ display_store_bw_large  : ${STORE_BW_64} ${STORE_BW_128}
 .SECONDEXPANSION:
 ${STORE_BW_2} ${STORE_BW_4} ${STORE_BW_8} ${STORE_BW_16} \
 ${STORE_BW_32} ${STORE_BW_64} ${STORE_BW_128} \
-	: $$(addsuffix .trc, $$(basename $$@))
+	: $$(addsuffix .trc, $$(basename $$@)) | STORE_BW_DIRS
 
-	python3 scripts/common/display_line_graph.py -p=mov_avg -f=True \
+	python3 scripts/display/line_graph.py -p=mov_avg -f=True \
 	-n=$(WINDOW_SIZE) --img=$@ < $<
+
+.PHONY: avg_store_bw_all
+avg_store_bw_all : ${STORE_BW_2_TRC} ${STORE_BW_4_TRC} ${STORE_BW_8_TRC} \
+${STORE_BW_16_TRC} ${STORE_BW_32_TRC} ${STORE_BW_64_TRC} ${STORE_BW_128_TRC}
 
 # Individual store targets for average trace calculations
 .PHONY: avg_store_bw_2 avg_store_bw_4 avg_store_bw_8
@@ -514,28 +557,89 @@ avg_store_bw_large  : ${STORE_BW_64_TRC} ${STORE_BW_128_TRC}
 .SECONDEXPANSION:
 ${STORE_BW_2_TRC} ${STORE_BW_4_TRC} ${STORE_BW_8_TRC} ${STORE_BW_16_TRC} \
 ${STORE_BW_32_TRC} ${STORE_BW_64_TRC} ${STORE_BW_128_TRC} \
-	: $$(addsuffix ../../../store-byte-stream.trc, $$(dir $$@))
+	: $$(addsuffix store-byte-stream.trc, $$(dir $$@)) | STORE_BW_DIRS
 	
-	python3 scripts/common/moving_average.py -n=$(WINDOW_SIZE) \
+	python3 scripts/common/moving_average.py -f=True -n=$(WINDOW_SIZE) \
 	< $< > $@
 
 # 	Recipes for solely producing the bandwidth streams
 # make bandwidth_streams - forms all possible bandwidth stream traces
 .PHONY: bandwidth_streams
-bandwidth: load_bw_streams store_bw_streams
+bandwidth_streams: load_bw_streams store_bw_streams
 
 .PHONY: load_bw_streams
 load_bw_streams: ${LOAD_BYTE_STREAMS}
-${BUILD_DIR}/%/load-byte-stream.trc: ${BUILD_DIR}/%/main.trc
-	python3 scripts/bandwidth/load_bw/load_bw.py --isa=$(ISA) < $< > $@
+${BUILD_DIR}/%/results/bw/load/load-byte-stream.trc: ${BUILD_DIR}/%/main.trc | LOAD_BW_DIRS
+	echo "Load BW streams"
+	python3 scripts/common/key_stream.py -k=Ld --isa=$(ISA) < $< > $@
 
 .PHONY: store_bw_streams
 store_bw_streams: ${STORE_BYTE_STREAMS}
-${BUILD_DIR}/%/store-byte-stream.trc: ${BUILD_DIR}/%/main.trc
-	python3 scripts/bandwidth/store_bw/store_bw.py --isa=$(ISA) < $< > $@
+${BUILD_DIR}/%/results/bw/store/store-byte-stream.trc: ${BUILD_DIR}/%/main.trc | STORE_BW_DIRS
+	python3 scripts/common/key_stream.py -k=St --isa=$(ISA) < $< > $@
 
 # 			-------------- INSTRUCTION PATTERN DETECTION ---------------
-# .PHONY: 
+
+.PHONY: display_instruction_sequences
+display_instruction_sequences : \
+instruction_pairs display_insn_pairs_heatmap display_insn_pairs_column \
+instruction_patterns display_insn_patterns_column
+
+.PHONY: display_insn_pairs_heatmap display_insn_pairs_column display_insn_patterns_column
+# Display heatmap of instruction pairs and their associated counters
+display_insn_pairs_heatmap 	 : ${FILTERED_INSN_PAIRS_HEATMAPS}
+${BUILD_DIR}/%/results/insn_sequences/filtered/pairs-heatmap.pdf : \
+	${BUILD_DIR}/%/results/insn_sequences/filtered/pairs.JSON | FILTERED_INSN_SEQ_DIRS
+
+	python3 scripts/display/heatmap.py \
+	-j=$< -p=insn_pairs -i=$@
+
+# Display a column graph of the most frequent instruction pairs
+display_insn_pairs_column 	 : ${FILTERED_INSN_PAIRS_COL}
+${BUILD_DIR}/%/results/insn_sequences/filtered/pairs-column.pdf : \
+	${BUILD_DIR}/%/results/insn_sequences/filtered/pairs.JSON | FILTERED_INSN_SEQ_DIRS
+
+	python3 scripts/display/column.py \
+	-j=$< -p=insn_pairs -i=$@
+
+# Display a column graph of the most frequen instruction patterns
+display_insn_patterns_column : ${FILTERED_INSN_PATTERNS_COL}
+${BUILD_DIR}/%/results/insn_sequences/filtered/patterns-column.pdf : \
+	${BUILD_DIR}/%/results/insn_sequences/filtered/patterns.JSON | FILTERED_INSN_SEQ_DIRS
+
+	python3 scripts/display/column.py \
+	-j=$< -p=insn_patterns -i=$@
+
+.PHONY: instruction_sequences
+instruction_sequences : instruction_pairs instruction_patterns
+
+.PHONY: instruction_pairs
+instruction_pairs : ${FILTERED_INSN_PAIRS}
+
+${BUILD_DIR}/%/results/insn_sequences/filtered/pairs.JSON \
+${BUILD_DIR}/%/results/insn_sequences/filtered/pairs.txt \
+${BUILD_DIR}/%/results/insn_sequences/raw/pairs.txt \
+${BUILD_DIR}/%/results/insn_sequences/raw/pairs.JSON : \
+	${BUILD_DIR}/%/main.trc | FILTERED_INSN_SEQ_DIRS RAW_INSN_SEQ_DIRS
+
+	python3 scripts/insn_patterns/insn_pairs.py \
+	-j=$(subst .txt,.JSON,$@) \
+	-r=$(abspath $(addsuffix ../raw/pairs,$(dir $@))) \
+	< $< > $(subst .JSON,.txt,$@)
+
+.PHONY: instruction_patterns 
+instruction_patterns : ${FILTERED_INSN_PATTERNS}
+
+${BUILD_DIR}/%/results/insn_sequences/filtered/patterns.JSON \
+${BUILD_DIR}/%/results/insn_sequences/filtered/patterns.txt \
+${BUILD_DIR}/%/results/insn_sequences/raw/patterns.txt \
+${BUILD_DIR}/%/results/insn_sequences/raw/patterns.JSON : \
+	${BUILD_DIR}/%/main.trc | FILTERED_INSN_SEQ_DIRS RAW_INSN_SEQ_DIRS
+
+	python3 scripts/insn_patterns/insn_patterns.py \
+	-j=$(subst .txt,.JSON,$@) \
+	-r=$(abspath $(addsuffix ../raw/patterns,$(dir $@))) \
+	< $< > $(subst .JSON,.txt,$@)
 
 # ----------------------------------- CLEAN ------------------------------------
 .PHONY: clean

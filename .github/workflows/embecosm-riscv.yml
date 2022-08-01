@@ -38,9 +38,15 @@ jobs:
           make
           sudo make install
 
-      - name: Install Python
+      - name: Install Python and the needed libraries
         run: |
           sudo apt-get -y install python3.6
+
+          pip install scipy
+
+          pip install numpy
+
+          pip install matplotlib
 
       - name: Report Versions
         run: |
